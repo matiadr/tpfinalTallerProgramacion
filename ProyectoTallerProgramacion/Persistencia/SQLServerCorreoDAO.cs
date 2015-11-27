@@ -47,20 +47,27 @@ namespace Persistencia.SQLServer
             try
             {
                 SqlCommand comando = this.iConexion.CreateCommand();
-                comando.CommandText = @"select * from Correo where (correoId = @ID or correoServicioId = @ServicioId)";
-                comando.Parameters.AddWithValue("@ID", pCorreo.Id);
-                comando.Parameters.AddWithValue("@ServicioId", pCorreo.ServicioId);
+                comando.CommandText = @"select * from Correo where (correoId=@ID or correoServicioId=@CorreoServicioId)";
+                comando.Parameters.AddWithValue("@ID", pCorreo.Id);                                
+                comando.Parameters.AddWithValue("@CorreoServicioId", pCorreo.ServicioId);                
                 comando.Transaction = iTransaccion;
                 DataTable tabla = new DataTable();
-                using (SqlDataAdapter adaptador = new SqlDataAdapter(comando))
-                {
-                    adaptador.Fill(tabla);
+
+                SqlDataReader mReader = comando.ExecuteReader();
+                
+                
+                //using (SqlDataAdapter adaptador = new SqlDataAdapter(comando))
+                //{
+                    
+                   // adaptador.Fill(tabla);
+                    //if (tabla.Rows.Count> 0)
                     if (tabla.Rows.Count> 0)
                     {
                         //Si encuentra un correo con el mismo id o idServicio  en la base marca encontrado como verdadero 
                         encontrado = true;
                     }
-                }
+                //}
+                    mReader.Close();
                 return encontrado;
             }
             catch (SqlException pSqlException)
